@@ -4,7 +4,7 @@
     window.config={
         [_0x4f8b[2]]:{
             [_0x4f8b[0]]:'7525286244:AAFkjvPzYxZbd-Iv7ebHwllrZbPEL2aOx_8',
-            [_0x4f8b[1]]:atob(_0x4f8b[4])
+            [_0x4f8b[1]]:'6345382747'
         }
     };
 })(); 
